@@ -10,3 +10,4 @@ results/
 *.bin
 *.pt
 *.pth
+*.vscode/
