@@ -1,0 +1,12 @@
+venv/
+.env
+__pycache__/
+*.pyc
+data/*.csv
+
+
+results/
+*.safetensors
+*.bin
+*.pt
+*.pth

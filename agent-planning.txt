@@ -1,0 +1,9 @@
+state = {
+    companyName: "",
+    role:"",
+    applicationlink:"" (optinal I feel, wont need it though)
+    recruiterEmail/Name:"",
+    status:"",
+    dateApplied:"",
+    cv/cl-link:""
+}
