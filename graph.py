@@ -1,24 +1,24 @@
 from langgraph.graph import START, StateGraph, END
 from state import JobState
 from nodes.extraction_data import extract_fields
-from nodes.save_data_to_csv import save_to_csv
+from nodes.save_data_to_db import save_to_db
 
 graph = StateGraph(JobState)
 
 # add your two nodes here
 graph.add_node("extract_fields", extract_fields) 
-graph.add_node("save_to_csv", save_to_csv) 
+graph.add_node("save_to_db", save_to_db) 
 # set entry point
 graph.add_edge(START, "extract_fields")
 graph.add_conditional_edges(
     "extract_fields",
     lambda state: state.get("extraction_success"), 
-    {True: "save_to_csv", False: END}
+    {True: "save_to_db", False: END}
 )
 
         
-# add edges: extract_fields -> save_to_csv -> END
-graph.add_edge("save_to_csv", END)
+# add edges: extract_fields -> save_to_db -> END
+graph.add_edge("save_to_db", END)
 
 app = graph.compile()
 

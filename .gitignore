@@ -11,3 +11,5 @@ results/
 *.pt
 *.pth
 *.vscode/
+/uploads
+/data
