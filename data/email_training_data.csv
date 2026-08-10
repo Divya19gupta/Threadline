@@ -1,0 +1,54 @@
+email_text,label
+"We were impressed by your application and would like to schedule a technical interview with you next week. Please let us know your availability.",interview
+"Thank you for applying. Unfortunately, after careful consideration, we have decided to move forward with other candidates at this time.",rejected
+"As the next step in our process, please complete the attached coding assessment within 5 days.",test
+"Hi, I'm Sarah from the recruiting team - would love to hop on a quick 15 min call this week to chat about the role. Any time work for you?",interview
+"We appreciate the time you took to apply, but the position has since been filled internally.",rejected
+"Congrats on making it to the next round! We'd like you to complete a short take-home assignment before your onsite.",test
+"Thank you for your interest in our company. While your background is impressive, we will not be moving forward with your application for this particular role.",rejected
+"Great news - the hiring team would like to meet you! Are you free for a video call sometime next Tuesday or Wednesday?",interview
+"Please find attached a case study. Kindly submit your solution by Friday EOD so we can proceed to the interview stage.",test
+"We regret to inform you that we have selected another candidate whose experience more closely matches our current needs.",rejected
+"Hi there, thanks for reaching out! Our engineering lead would like to set up a screening call - here's a link to book a slot.",interview
+"We've reviewed your resume and would like you to take our online assessment (link below) as the next step.",test
+"After reviewing all applications, we've decided not to proceed with your candidacy at this time. We wish you the best in your job search.",rejected
+"You're invited to our virtual interview day! Please pick a time slot from the calendar link attached.",interview
+"Before we move forward, we'd like to see how you approach problems - please solve the attached challenge and send back your code.",test
+"Thank you for your patience. Unfortunately this role has been put on hold, and we will not be continuing with any candidates for now.",rejected
+"We loved your portfolio! Let's set up time to talk through your experience - does Thursday afternoon work?",interview
+"This is an automated message: your application status has been updated to 'Not selected'. We encourage you to apply for future openings.",rejected
+"As part of our hiring process, please complete this 30-minute online test measuring problem-solving skills.",test
+"Hi, thanks so much for applying - we'd like to invite you for a first-round interview with our team lead.",interview
+"We're keeping your resume on file in case a suitable position opens up in the future. At this time, we are unable to move forward.",rejected
+"Attached is a short technical quiz. Please complete it and return within 48 hours so we can assess next steps.",test
+"Our team was excited by your application! Could you share a few times that work for a call this week?",interview
+"Unfortunately your qualifications, while strong, don't quite align with what we're looking for in this role right now.",rejected
+"Please log in to the assessment portal using the link below to begin your coding test.",test
+"We'd like to move you forward to the interview stage - please find the scheduling link attached.",interview
+"no",rejected
+"Interview invite: pls confirm avail this week for a 30 min chat w hiring mgr",interview
+"assessment link inside, complete by eod thurs",test
+"we went another direction, thx for applying tho",rejected
+"Hi! Loved reading through your GitHub - are you around for a casual chat sometime this week about the opening?",interview
+"As part of our evaluation process, we ask all shortlisted candidates to complete a brief skills test.",test
+"We have decided to close this requisition and will not be filling the role at this time.",rejected
+"Just a heads up - next step is a quick assessment, should take about an hour. Link below.",test
+"Really enjoyed your cover letter! Let's find time to connect - are mornings or afternoons better for you?",interview
+"Thanks again for your time throughout the process. We've chosen to extend an offer to another candidate.",rejected
+"We're excited to move you to the final round - a 1 hour interview with our VP of Engineering.",interview
+"Please note: due to the high volume of applicants, we are unable to respond individually to every application. Consider this an update that your application was not selected.",rejected
+"Before scheduling a call, we'd like you to complete a short written exercise - details attached.",test
+"Hey! Quick one - are you still interested in the role? If so let's grab 20 min this week to talk through it.",interview
+"We are pleased to offer you the position of Software Engineer. Please find your offer letter attached, including salary and start date details.",offer
+"Congratulations! The team would love to have you on board. Please review the attached offer and let us know if you have any questions.",offer
+"Welcome to the team! Please sign and return the enclosed offer letter by end of week to confirm your acceptance.",offer
+"We're delighted to extend you an offer, pending successful completion of a background check. Details attached.",offer
+"Great news - we'd like to officially offer you the role! Let's schedule a call to go over compensation and next steps.",offer
+"Hi, following your final interview, we're happy to move forward with an offer. HR will reach out shortly with paperwork.",offer
+"pleased to confirm - offer attached, let us know by fri if you accept :)",offer
+"Your offer letter is ready for review in the portal. Please complete the onboarding steps within 7 days.",offer
+"After great discussions with the team, we would like to formally welcome you aboard. Offer details below.",offer
+"Subject to reference checks clearing, we are happy to extend an offer for the Backend Engineer role.",offer
+"So excited to have you join us! Offer letter, benefits summary, and start date info all attached.",offer
+"We enjoyed getting to know you throughout the process and are thrilled to offer you the position.",offer
+"quick one - HR will send the official offer letter today, just wanted to give you the heads up first :)",offer

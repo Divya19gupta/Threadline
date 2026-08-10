@@ -1,15 +1,21 @@
+# secrets - never commit these
+credentials.json
+token.json
+data/credentials.json
+data/token.json
+
+# personal data - unique to each user, not needed to reproduce the project
+data/applications.db
+data/applications.csv
+uploads/
+
+# standard stuff
 venv/
 .env
 __pycache__/
 *.pyc
-data/*.csv
-
-
 results/
 *.safetensors
 *.bin
 *.pt
 *.pth
-*.vscode/
-/uploads
-/data

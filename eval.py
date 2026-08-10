@@ -1,7 +1,7 @@
 import time
 
 from nodes.extraction_data import extract_fields
-from data.eval_data import test_cases
+from eval_data import test_cases
 from state import JobState
 
 total_fields = 0
