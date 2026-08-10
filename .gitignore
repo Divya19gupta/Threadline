@@ -1,10 +1,10 @@
-# secrets - never commit these
+# secrets
 credentials.json
 token.json
 data/credentials.json
 data/token.json
 
-# personal data - unique to each user, not needed to reproduce the project
+# personal data 
 data/applications.db
 data/applications.csv
 uploads/
