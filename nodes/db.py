@@ -6,7 +6,7 @@ def init_db():
     
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS applications (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER PRIMARY KEY,
             company_name TEXT,
             role TEXT,
             application_link TEXT,

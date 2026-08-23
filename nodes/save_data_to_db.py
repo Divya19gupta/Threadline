@@ -1,5 +1,6 @@
 import json
 import sqlite3
+import time
 from state import JobState
 import pandas as pd
 import os
@@ -55,9 +56,11 @@ def save_to_db(state: JobState):
     conn = sqlite3.connect("data/applications.db")
     cursor = conn.cursor()
 
-# ? helps in preventing SQL injection attacks by separating the SQL code from the data being inserted
+    new_id = int(time.time() * 1000)
+
     cursor.execute("""
         INSERT INTO applications (
+            id,
             company_name,
             role,
             application_link,
@@ -67,8 +70,9 @@ def save_to_db(state: JobState):
             date_applied,
             cv_link,
             cl_link
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
+        new_id,
         state.get('company_name'),
         state.get('role'),
         state.get('application_link'),

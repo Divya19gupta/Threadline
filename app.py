@@ -7,6 +7,8 @@ import uuid
 from graph import app as agent_app
 from nodes.db import init_db, get_all_applications, update_application, delete_application
 
+from gmail_auth import get_gmail_service, load_classifier, check_for_status_update
+
 st.set_page_config(page_title="Threadline", layout="wide")
 
 init_db()  # safe to call every run - only creates the table if missing
@@ -19,6 +21,32 @@ if "last_result" not in st.session_state:
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+@st.cache_resource
+def get_cached_gmail_service():
+    return get_gmail_service()
+
+@st.cache_resource
+def get_cached_classifier():
+    return load_classifier()
+
+def review_reason(confidence):
+    if confidence < 0.15:
+        return "Barely any signal found — likely not a real update."
+    elif confidence < 0.25:
+        return "Weak signal — the AI genuinely isn't sure."
+    else:
+        return "Some signal, but not quite confident enough to trust automatically."
+    
+def results_table(rows, value_key, value_label, show_reason=False):
+    data = []
+    for r in rows:
+        entry = {"ID": r["app_id"], "Company": r["company_name"], value_label: r.get(value_key, "—")}
+        if show_reason:
+            entry["Why it needs review"] = review_reason(r.get("confidence", 0))
+        entry["Matched email (preview)"] = (r.get("body", "") or "")[:150]
+        data.append(entry)
+    df_display = pd.DataFrame(data)
+    st.dataframe(df_display, hide_index=True, width="stretch")
 
 def save_uploaded_file(uploaded_file):
     if uploaded_file is None:
@@ -53,26 +81,109 @@ if st.session_state.processing:
         </div>
     """, unsafe_allow_html=True)
 
-    initial_state = st.session_state.pending_state
-    result = agent_app.invoke(initial_state)
-    st.session_state.processing = False
+    # snapshot BEFORE the save happens - the new row must never be compared against itself
+    existing_apps_before = get_all_applications()
 
-    if result.get("extraction_success"):
-        st.session_state.last_result = (
-            "success",
-            f"Saved: {result.get('company_name')} — {result.get('role')}"
-        )
-        st.session_state.form_key += 1
-    else:
-        st.session_state.last_result = (
-            "error",
-            "Extraction failed — please check the posting text and try again."
-        )
+    initial_state = st.session_state.pending_state
+
+    try:
+        result = agent_app.invoke(initial_state)
+
+        if result.get("extraction_success"):
+            new_company = (result.get("company_name") or "").strip().lower()
+            new_role = (result.get("role") or "").strip().lower()
+            new_date = initial_state["date_applied"]
+
+            is_dup = any(
+                (app[1] or "").strip().lower() == new_company
+                and (app[2] or "").strip().lower() == new_role
+                and app[7] == new_date
+                for app in existing_apps_before
+            )
+
+            if is_dup:
+                st.session_state.last_result = (
+                    "warning",
+                    f"Looks like you already have an application for {result.get('company_name')} — {result.get('role')} on this date. Saved anyway, please check for duplicates."
+                )
+            else:
+                st.session_state.last_result = (
+                    "success",
+                    f"Saved: {result.get('company_name')} — {result.get('role')}"
+                )
+            st.session_state.form_key += 1
+        else:
+            st.session_state.last_result = (
+                "error",
+                "Extraction failed — please check the posting text and try again."
+            )
+    except Exception as e:
+        st.session_state.last_result = ("error", f"Something went wrong while saving: {e}")
+    finally:
+        st.session_state.processing = False
 
     st.rerun()
 
 
 st.title("📋 Threadline: your job hunt, tracked")
+
+if "gmail_checking" not in st.session_state:
+    st.session_state.gmail_checking = False
+if "gmail_results" not in st.session_state:
+    st.session_state.gmail_results = None
+
+if st.session_state.gmail_checking:
+    st.markdown("""
+        <div style="position: fixed; top:0; left:0; width:100%; height:100%;
+                    background: rgba(0,0,0,0.88); z-index:9999;
+                    display:flex; flex-direction:column; align-items:center; justify-content:center;
+                    color:white; font-size:22px; gap: 12px;">
+            <div>📬 Checking Gmail for updates...</div>
+            <div style="font-size:14px; color:#aaa;">Matching and classifying emails, this may take a moment</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    service = get_cached_gmail_service()
+    tokenizer, model = get_cached_classifier()
+    apps = get_all_applications()
+
+    results = []
+    for app in apps:
+        app_id, company_name, role, link, rname, remail, status, date_applied, cv, cl = app
+        try:
+            result = check_for_status_update(service, tokenizer, model, app_id, company_name, date_applied)
+            result["company_name"] = company_name
+            results.append(result)
+        except ValueError:
+            results.append({"app_id": app_id, "company_name": company_name, "status": "bad_date"})
+
+    st.session_state.gmail_results = results
+    st.session_state.gmail_checking = False
+    st.rerun()
+
+if st.button("📬 Check Gmail for updates"):
+    st.session_state.gmail_checking = True
+    st.rerun()
+
+if st.session_state.gmail_results:
+    st.subheader("Last check results")
+
+    updated = [r for r in st.session_state.gmail_results if r["status"] == "updated"]
+    needs_review = [r for r in st.session_state.gmail_results if r["status"] == "needs_review"]
+    no_match = [r for r in st.session_state.gmail_results if r["status"] in ("no_emails_found", "bad_date")]
+
+    if updated:
+        with st.expander(f"✅ Updated ({len(updated)})", expanded=True):
+            results_table(updated, "new_status", "New Status")
+
+    if needs_review:
+        with st.expander(f"⚠️ Needs your review ({len(needs_review)})", expanded=True):
+            results_table(needs_review, "guessed_label", "Guessed Status", show_reason=True)
+
+    if no_match:
+        with st.expander(f"No updates found ({len(no_match)})"):
+            for r in no_match:
+                st.caption(r["company_name"])
 
 if st.session_state.last_result:
     kind, message = st.session_state.last_result
@@ -96,7 +207,7 @@ with left:
     cl_file = st.file_uploader("Cover letter used (optional)", type=["pdf", "docx"], key=f"cl_input_{st.session_state.form_key}")
     date_applied = st.date_input("Date applied", key=f"date_input_{st.session_state.form_key}")
 
-    add_disabled = not raw_text.strip()
+    add_disabled = not raw_text.strip() or not date_applied
     if st.button("Add application", type="primary", disabled=add_disabled):
         cv_link = save_uploaded_file(cv_file)
         cl_link = save_uploaded_file(cl_file)
