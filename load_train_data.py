@@ -60,9 +60,14 @@ test_dataset = EmailDataset(test_encodings, test_labels)
 
 training_args = TrainingArguments(
     output_dir="./results",
-    num_train_epochs=4,
+    num_train_epochs=8,
     per_device_train_batch_size=8,
-    eval_strategy="epoch"
+    learning_rate=2e-5,
+    eval_strategy="epoch",
+    save_strategy="epoch",
+    load_best_model_at_end=True,
+    metric_for_best_model="eval_loss",
+    weight_decay=0.01
 )
 
 trainer = Trainer(

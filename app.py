@@ -144,14 +144,15 @@ if st.session_state.gmail_checking:
     """, unsafe_allow_html=True)
 
     service = get_cached_gmail_service()
-    tokenizer, model = get_cached_classifier()
+    # tokenizer, model = get_cached_classifier()
+    embedder, reference_embeddings = get_cached_classifier()
     apps = get_all_applications()
 
     results = []
     for app in apps:
         app_id, company_name, role, link, rname, remail, status, date_applied, cv, cl = app
         try:
-            result = check_for_status_update(service, tokenizer, model, app_id, company_name, date_applied)
+            result = check_for_status_update(service, embedder, reference_embeddings, app_id, company_name, date_applied)
             result["company_name"] = company_name
             results.append(result)
         except ValueError:
@@ -170,6 +171,7 @@ if st.session_state.gmail_results:
 
     updated = [r for r in st.session_state.gmail_results if r["status"] == "updated"]
     needs_review = [r for r in st.session_state.gmail_results if r["status"] == "needs_review"]
+    acknowledged = [r for r in st.session_state.gmail_results if r["status"] == "acknowledged_only"]
     no_match = [r for r in st.session_state.gmail_results if r["status"] in ("no_emails_found", "bad_date")]
 
     if updated:
@@ -179,6 +181,10 @@ if st.session_state.gmail_results:
     if needs_review:
         with st.expander(f"⚠️ Needs your review ({len(needs_review)})", expanded=True):
             results_table(needs_review, "guessed_label", "Guessed Status", show_reason=True)
+
+    if acknowledged:
+        with st.expander(f"✅ Acknowledged, No Updates ({len(acknowledged)})", expanded=True):
+            results_table(acknowledged, "confidence", "Confidence")
 
     if no_match:
         with st.expander(f"No updates found ({len(no_match)})"):
